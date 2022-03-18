@@ -1,9 +1,11 @@
-# Personnal cookiecutter
+Personnal cookiecutter
+=======================
 
 This is a personnal cookie cutter taht I use for data science projects.
 It uses poetry to manage python packages and poe the poet to create quick commands.
 
-## Installation
+Installation
+------------
 
 Create a new project with:
 
