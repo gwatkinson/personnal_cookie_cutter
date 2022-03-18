@@ -1,0 +1,13 @@
+{
+	"directory_name": "",
+	"project_name": "",
+	"version": "0.1.0",
+	"python_version": "3.9.9",
+	"virtualenv_name": ".venv",
+	"description": "",
+	"name": "Gabriel Watkinson",
+	"email": "gabriel.watkinson@gmail.com",
+	"notebook_folder": "notebooks",
+	"data_folder": "data",
+	"test_folder": "tests"
+}
