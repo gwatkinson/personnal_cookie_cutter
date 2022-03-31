@@ -37,7 +37,7 @@ nbqa = "^1.3.1"
 docformatter = "^1.4"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.8"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.extras]
@@ -56,6 +56,62 @@ shell_interpreter = "powershell"
 type = "virtualenv"
 
 [tool.poe.tasks]
+
+  [tool.poe.tasks.git-setup]
+  help = "Setup git"
+  shell  = """
+    git init
+    git config user.name "{{cookiecutter.name}}"
+    git config user.email "{{cookiecutter.email}}"
+  """
+  interpreter = "powershell"
+
+  [tool.poe.tasks.virtualenv-setup]
+  help = "Setup the virtual env"
+  shell = """
+    py -m virtualenv --python=python{{cookiecutter.python_version}} {{cookiecutter.virtualenv_name}}
+  """
+  interpreter = "powershell"
+
+  [tool.poe.tasks.install-dependencies]
+  help = "Install dependencies"
+  shell = """
+    poetry lock
+    poetry install
+  """
+  interpreter = "powershell"
+
+  [tool.poe.tasks.pre-commit-setup]
+  help = "Setup pre-commit hooks"
+  shell = """
+    git add .pre-commit-config.yaml
+    git commit -m 'Add pre-commit hooks'
+    pre-commit install
+  """
+  interpreter = "powershell"
+
+  [tool.poe.tasks.initial-commit]
+  help = "Initial commit"
+  shell  = """
+    git add .
+    git commit -m "Initial commit"
+  """
+  interpreter = "powershell"
+
+  [tool.poe.tasks.initialize-1]
+  help = "Initialize the first part of the project"
+  sequence = ["git-setup", "virtualenv-setup"]
+
+  [tool.poe.tasks.initialize-2]
+  help = "Initialize the second part of the project"
+  sequence = ["install-dependencies", "pre-commit-setup", "initial-commit"]
+
+  [tool.poe.tasks.force-cuda]
+  help = "Install pytorch via pip with cuda"
+  shell = """
+    python -m pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio===0.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+  """
+  interpreter = "powershell"
 
   [tool.poe.tasks.test]
   help = "Run unit and feature tests"
@@ -149,62 +205,6 @@ type = "virtualenv"
   [tool.poe.tasks.security-checks]
   help = "Run all security checks"
   sequence = ["safety", "bandit"]
-
-  [tool.poe.tasks.git-setup]
-  help = "Setup git"
-  shell  = """
-    git init
-    git config user.name "{{cookiecutter.name}}"
-    git config user.email "{{cookiecutter.email}}"
-  """
-  interpreter = "powershell"
-
-  [tool.poe.tasks.virtualenv-setup]
-  help = "Setup the virtual env"
-  shell = """
-    virtualenv --python=python{{cookiecutter.python_version}} {{cookiecutter.virtualenv_name}}
-  """
-  interpreter = "powershell"
-
-  [tool.poe.tasks.install-dependencies]
-  help = "Install dependencies"
-  shell = """
-    poetry lock
-    poetry install
-  """
-  interpreter = "powershell"
-
-  [tool.poe.tasks.pre-commit-setup]
-  help = "Setup pre-commit hooks"
-  shell = """
-    git add .pre-commit-config.yaml
-    git commit -m 'Add pre-commit hooks'
-    pre-commit install
-  """
-  interpreter = "powershell"
-
-  [tool.poe.tasks.initial-commit]
-  help = "Initial commit"
-  shell  = """
-    git add .
-    git commit -m "Initial commit"
-  """
-  interpreter = "powershell"
-
-  [tool.poe.tasks.initialize-1]
-  help = "Initialize the first part of the project"
-  sequence = ["git-setup", "virtualenv-setup"]
-
-  [tool.poe.tasks.initialize-2]
-  help = "Initialize the second part of the project"
-  sequence = ["install-dependencies", "pre-commit-setup", "initial-commit"]
-
-  [tool.poe.tasks.force-cuda]
-  help = "Install pytorch via pip with cuda"
-  shell = """
-    python -m pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio===0.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
-  """
-  interpreter = "powershell"
 
   [tool.poe.tasks.poe]
   help   = "Execute poe from this repo (useful for testing)"
